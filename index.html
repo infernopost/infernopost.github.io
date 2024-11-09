@@ -169,61 +169,115 @@
         </form>
     </div>
     <script>
-        document.getElementById('staffApplication').addEventListener('submit', function(e) {
+        document.getElementById('staffApplication').addEventListener('submit', async function(e) {
             e.preventDefault();
-
-            // Recopilar los datos del formulario
-            const formData = new FormData(this);
-            const data = {};
-            formData.forEach((value, key) => {
-                data[key] = value;
-            });
-
-            // Estructura de embed para el webhook de Discord
-            const payload = {
-                embeds: [{
-                    title: "Nueva Postulación Staff InfernoMC",
-                    color: 0xff5722, // Color en hexadecimal
-                    fields: [
-                        { name: "Nombre de usuario", value: data.username || "N/A", inline: true },
-                        { name: "Usuario de discord", value: data.discord || "N/A", inline: true },
-                        { name: "Nombre Aternos", value: data.aternos || "N/A", inline: true },
-                        { name: "Correo", value: data.email || "N/A", inline: true },
-                        { name: "¿De dónde conoces InfernoMC?", value: data["conocidoInfernoMC"] || "N/A", inline: false },
-                        { name: "Edad", value: data.age || "N/A", inline: true },
-                        { name: "País", value: data.Pais || "N/A", inline: true },
-                        { name: "Experiencia en Minecraft (años)", value: data.experience || "N/A", inline: true },
-                        { name: "¿Has sido staff en otros servidores?", value: data.previousStaff || "N/A", inline: true },
-                        { name: "Experiencia previa", value: data.previousExperience || "N/A", inline: false },
-                        { name: "Disponibilidad semanal (horas)", value: data.availability || "N/A", inline: true },
-                        { name: "Habilidades", value: data.skills || "N/A", inline: false },
-                        { name: "Manejo de situación", value: data.scenario || "N/A", inline: false },
-                        { name: "Mejoras sugeridas", value: data.improvements || "N/A", inline: false },
-                        { name: "Razón para unirse", value: data.reason || "N/A", inline: false }
-                    ]
-                }]
+            
+            // Recopilar datos del formulario
+            const formData = {
+                username: document.getElementById('username').value,
+                discord: document.querySelector('input[name="discord"]').value,
+                aternos: document.querySelector('input[name="text"]').value,
+                email: document.getElementById('email').value,
+                serverKnowledge: document.getElementById('experience').value,
+                age: document.getElementById('age').value,
+                pais: document.querySelector('input[name="Pais"]').value,
+                experience: document.querySelector('input[name="experience"]').value,
+                previousStaff: document.getElementById('previousStaff').value,
+                previousExperience: document.getElementById('previousExperience').value,
+                availability: document.getElementById('availability').value,
+                skills: document.getElementById('skills').value,
+                scenario: document.getElementById('scenario').value,
+                improvements: document.getElementById('improvements').value,
+                reason: document.getElementById('reason').value
             };
 
-            // Enviar los datos al webhook de Discord
-            fetch("https://discord.com/api/webhooks/1304227026785402971/M-WBJNfZFlBROpECyNw_Yt2qYFw0WcelbhfUj7O9qniI-4n2lkaasxTAqzzGcC5xrHAc", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload)
-            })
-            .then(response => {
+            try {
+                const response = await fetch('https://discord.com/api/webhooks/1304227026785402971/M-WBJNfZFlBROpECyNw_Yt2qYFw0WcelbhfUj7O9qniI-4n2lkaasxTAqzzGcC5xrHAc', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        embeds: [{
+                            title: "📝 Nueva Postulación Staff",
+                            color: 0xFF5722,
+                            thumbnail: {
+                                url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/inferno-GJPoomm80aDbUhVIkyb5B8JMc4JbsT.png"
+                            },
+                            fields: [
+                                {
+                                    name: "👤 Información Personal",
+                                    value: [
+                                        `**Minecraft:** ${formData.username}`,
+                                        `**Discord:** ${formData.discord}`,
+                                        `**Aternos:** ${formData.aternos}`,
+                                        `**Correo:** ${formData.email}`,
+                                        `**Edad:** ${formData.age}`,
+                                        `**País:** ${formData.pais}`
+                                    ].join('\n'),
+                                    inline: false
+                                },
+                                {
+                                    name: "🎮 Experiencia",
+                                    value: [
+                                        `**Años en Minecraft:** ${formData.experience}`,
+                                        `**Disponibilidad:** ${formData.availability} horas semanales`,
+                                        `**Staff Previo:** ${formData.previousStaff === 'yes' ? 'Sí' : 'No'}`
+                                    ].join('\n'),
+                                    inline: false
+                                },
+                                {
+                                    name: "💼 Experiencia Previa como Staff",
+                                    value: formData.previousExperience || "No especificada",
+                                    inline: false
+                                },
+                                {
+                                    name: "🌟 Habilidades",
+                                    value: formData.skills || "No especificadas",
+                                    inline: false
+                                },
+                                {
+                                    name: "📝 Manejo de Situaciones",
+                                    value: formData.scenario || "No especificado",
+                                    inline: false
+                                },
+                                {
+                                    name: "💡 Sugerencias de Mejora",
+                                    value: formData.improvements || "No especificadas",
+                                    inline: false
+                                },
+                                {
+                                    name: "❓ Motivación",
+                                    value: formData.reason || "No especificada",
+                                    inline: false
+                                },
+                                {
+                                    name: "🔍 Conocimiento del Servidor",
+                                    value: formData.serverKnowledge || "No especificado",
+                                    inline: false
+                                }
+                            ],
+                            footer: {
+                                text: "InfernoMC Staff Application",
+                                icon_url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/inferno-GJPoomm80aDbUhVIkyb5B8JMc4JbsT.png"
+                            },
+                            timestamp: new Date().toISOString()
+                        }]
+                    })
+                });
+
                 if (response.ok) {
-                    alert("¡Gracias por tu postulación! La revisaremos pronto.");
+                    alert('¡Postulación enviada exitosamente!');
+                    this.reset(); // Limpia el formulario
                 } else {
-                    alert("Hubo un problema al enviar tu postulación. Intenta nuevamente.");
+                    throw new Error('Error al enviar la postulación');
                 }
-            })
-            .catch(error => {
-                console.error("Error al enviar al webhook:", error);
-                alert("Hubo un error al enviar tu postulación. Por favor intenta nuevamente.");
-            });
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Hubo un error al enviar la postulación. Por favor intenta nuevamente.');
+            }
         });
     </script>
+
 </body>
 </html>
